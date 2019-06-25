@@ -50,13 +50,16 @@ public class BullhornController {
             return "messageform";
         }
         if(file.isEmpty() && message.getImageUrl().isEmpty()){
-            message.setImageUrl("https://res.cloudinary.com/dn5oij7hb/image/upload/v1559574176/Not_available.jpg");
+            return "messageform";
         }
         try{
-            Map uploadResult = cloudc.upload(file.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
-            message.setImageUrl(uploadResult.get("url").toString());
-            message.setAuthorId(userService.getUser().getId());
-            messageRepository.save(message);
+            if(!file.isEmpty()) {
+                Map uploadResult = cloudc.upload(file.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
+                message.setImageUrl(uploadResult.get("url").toString());
+                message.setAuthorId(userService.getUser().getId());
+                messageRepository.save(message);
+            }
+
         }catch (IOException e){
             e.printStackTrace();
             return "redirect:/";
